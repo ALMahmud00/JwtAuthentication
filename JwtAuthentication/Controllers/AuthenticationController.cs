@@ -1,4 +1,5 @@
 ﻿using JwtAuthentication.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace JwtAuthentication.Controllers
@@ -15,6 +16,16 @@ namespace JwtAuthentication.Controllers
             var authResult = jwtAuthManager.Authenticate(credential.UserName, credential.Password);
 
             return Ok(authResult);
+        }
+
+
+        [HttpGet]
+        [Route("UserInfo")]
+        [Authorize]
+        public IActionResult UserInfo()
+        {
+            var result = new { UserName = "admin", Password = "admin" };
+            return Ok(result);
         }
     }
 }
