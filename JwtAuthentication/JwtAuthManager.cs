@@ -26,6 +26,7 @@ namespace JwtAuthentication
                 Subject = new System.Security.Claims.ClaimsIdentity(new List<Claim>
                 {
                     new Claim("username", userName),
+                    new Claim("author", "https://github.com/ALMahmud00"),
                     new Claim(ClaimTypes.PrimaryGroupSid, "Admin User Group")
                 }),
                 Expires = tokenExpiryTimeStamp,
