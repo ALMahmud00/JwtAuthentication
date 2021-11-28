@@ -4,9 +4,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -30,12 +32,21 @@ namespace JwtAuthentication
             services.AddControllers();
             services.AddSwaggerGen();
 
+            #region AUTHOTIZATION IN MIDDLEWARE
+            services.AddControllers(opts =>
+            {
+                var authenticatedUserPolicy = new AuthorizationPolicyBuilder()
+                          .RequireAuthenticatedUser()
+                          .Build();
+                opts.Filters.Add(new AuthorizeFilter(authenticatedUserPolicy));
+            });
+            #endregion
             #region ===> JWT AUTHENTICATION <===
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
                 options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-
+             
             }).AddJwtBearer(option =>
             {
                 option.RequireHttpsMetadata = false;

@@ -21,7 +21,6 @@ namespace JwtAuthentication.Controllers
 
         [HttpGet]
         [Route("UserInfo")]
-        [Authorize]
         public IActionResult UserInfo()
         {
             var result = new { UserName = "admin", Password = "admin" };
