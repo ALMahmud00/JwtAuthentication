@@ -9,6 +9,7 @@ namespace JwtAuthentication.Controllers
     public class AuthenticationController : ControllerBase
     {
         [HttpPost]
+        [AllowAnonymous]
         [Route("Login")]
         public IActionResult Login(Credential credential)
         {

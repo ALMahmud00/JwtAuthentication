@@ -14,6 +14,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 
 namespace JwtAuthentication
 {
@@ -29,8 +30,35 @@ namespace JwtAuthentication
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddControllers();
-            services.AddSwaggerGen();
+            #region SWAGGER           
+            services.AddSwaggerGen(c=>
+            {
+                c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme()
+                {
+                    Description = "Enter the request header in the following box to add Jwt To grant authorization Token: Bearer Token",
+                    Name = "Authorization",
+                    In = ParameterLocation.Header,
+                    Type = SecuritySchemeType.ApiKey,
+                    BearerFormat = "JWT",
+                    Scheme = "Bearer"
+                });
+
+                c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                {
+                    {
+                        new OpenApiSecurityScheme
+                        {
+                            Reference = new OpenApiReference
+                            {
+                                Type = ReferenceType.SecurityScheme,
+                                Id = "Bearer"
+                            }
+                        },
+                        new string[] { }
+                    }
+                });
+            });
+            #endregion
 
             #region AUTHOTIZATION IN MIDDLEWARE
             services.AddControllers(opts =>
@@ -41,6 +69,7 @@ namespace JwtAuthentication
                 opts.Filters.Add(new AuthorizeFilter(authenticatedUserPolicy));
             });
             #endregion
+            
             #region ===> JWT AUTHENTICATION <===
             services.AddAuthentication(options =>
             {
