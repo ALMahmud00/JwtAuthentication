@@ -1,6 +1,7 @@
 ﻿using JwtAuthentication.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace JwtAuthentication.Controllers
@@ -35,6 +36,19 @@ namespace JwtAuthentication.Controllers
         {
             var result = new { Author = this.User.Claims.First(i => i.Type == "author").Value };
             return Ok(result);
+        }
+
+        [AllowAnonymous]
+        [HttpGet("GetAllHeaders")]
+        public ActionResult<Dictionary<string, string>> GetAllHeaders()
+        {
+            Dictionary<string, string> requestHeaders =
+               new Dictionary<string, string>();
+            foreach (var header in Request.Headers)
+            {
+                requestHeaders.Add(header.Key, header.Value);
+            }
+            return requestHeaders;
         }
     }
 }
