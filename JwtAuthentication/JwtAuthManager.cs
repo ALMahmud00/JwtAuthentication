@@ -13,7 +13,8 @@ namespace JwtAuthentication
         public JwtAuthResponse Authenticate(string userName, string password)
         {
             //validate the username and password
-            if (userName != "admin" || password != "admin")
+            var validUser = ValidUser(userName,password);
+            if (validUser == null)
             {
                 throw new UnauthorizedAccessException("Unauthorize access denied!");
             }
@@ -25,9 +26,11 @@ namespace JwtAuthentication
             {
                 Subject = new System.Security.Claims.ClaimsIdentity(new List<Claim>
                 {
-                    new Claim("username", userName),
-                    new Claim("author", "https://github.com/ALMahmud00"),
-                    new Claim(ClaimTypes.PrimaryGroupSid, "Admin User Group")
+                    new Claim("username", validUser.UserName),
+                    new Claim("useremail", validUser.UserEmail),
+                    new Claim("userid", validUser.UserId.ToString()),
+                    new Claim("userip", validUser.UserIP),
+                    new Claim(ClaimTypes.Authentication, "ADMIN")
                 }),
                 Expires = tokenExpiryTimeStamp,
                 SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(tokenKey), SecurityAlgorithms.HmacSha256Signature)
@@ -43,6 +46,23 @@ namespace JwtAuthentication
                 ExpiresInSeconds = (long) tokenExpiryTimeStamp.Subtract(DateTime.Now).TotalSeconds
             };
 
+        }
+        public ValidUserInfo ValidUser(string userName, string password)
+        {
+            if(userName == "mahmud@admin" && password == "123")
+            {
+                return new ValidUserInfo()
+                {
+                    UserName = userName,
+                    UserEmail = "email@email.com",
+                    UserId = 777,
+                    UserIP = "255.255.255.255"
+                };
+            }
+            else
+            {
+                return null;
+            }
         }
     }
 }

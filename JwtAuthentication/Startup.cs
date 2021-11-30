@@ -106,10 +106,12 @@ namespace JwtAuthentication
                 c.SwaggerEndpoint("/swagger/v1/swagger.json", "JWT Authentication");
                 c.RoutePrefix = "swagger";
             });
-
+            
             app.UseRouting();
+
             #region ===> JWT AUTHENTICATION <===
             app.UseAuthentication();
+            app.UseMiddleware<RetrieveJwtInfoMiddleware>();
             #endregion
 
             app.UseAuthorization();
